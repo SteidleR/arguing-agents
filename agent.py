@@ -1,10 +1,29 @@
+import math
+import random
+import logging
 
 
 class Agent:
     def __init__(self, file_name_costs):
         self.cost_matrix = Agent.read_cost_matrix(file_name_costs)
 
-    def evaluate_cost(self, contract):
+    def accept_contract_fink(self, contract, last_contract, temperature=1) -> bool:
+        costs = self._evaluate_cost(contract)
+        costs_last = self._evaluate_cost(last_contract)
+
+        print(f"costs:      {costs}")
+        print(f"costs_last: {costs_last}")
+
+        if costs_last >= costs:
+            return True
+        else:
+            prob = math.e ** ((costs_last - costs) / temperature)
+            logging.debug(prob)
+            random_decision = random.random()
+            print(random_decision)
+            return random_decision < prob
+
+    def _evaluate_cost(self, contract):
         """
         Calculates the costs for a series of jobs.
         :param contract:
@@ -12,7 +31,7 @@ class Agent:
         """
         costs = 0
         for i in range(len(contract)-1):
-            costs += self.cost_matrix[i][i+1]
+            costs += self.cost_matrix[contract[i]][contract[i+1]]
         return costs
 
     @staticmethod
