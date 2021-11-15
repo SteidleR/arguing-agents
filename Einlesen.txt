@@ -1,0 +1,48 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+
+public class Einlesen {
+
+	public static void main(String[] args) throws FileNotFoundException{
+
+		int[][] costA = einlesenAus(new File("datenA.txt"));
+		int[][] costB = einlesenAus(new File("datenB.txt"));
+		
+		
+		for(int i=0;i<costA.length;i++){
+			for(int j=0;j<costA[i].length;j++){
+				System.out.print(costA[i][j]+ " ");
+			}
+			System.out.println();
+		}
+		System.out.println();System.out.println();
+		for(int i=0;i<costB.length;i++){
+			for(int j=0;j<costB[i].length;j++){
+				System.out.print(costB[i][j]+ " ");
+			}
+			System.out.println();
+		}
+	}
+
+	public static int[][] einlesenAus(File file) throws FileNotFoundException {
+		int[][] cost = new int[1][1];
+		try{
+			Scanner scanner = new Scanner(file);
+			int dim         = scanner.nextInt();
+			cost            = new int[dim][dim];
+			for(int i=0;i<dim;i++){
+				for(int j=0;j<dim;j++){
+					int x = scanner.nextInt();
+					cost[i][j] = x;
+				}
+			}			
+			scanner.close();
+		}
+		catch(FileNotFoundException e){
+			System.out.println(e.getMessage());
+        }
+		return cost;			
+	}
+}
