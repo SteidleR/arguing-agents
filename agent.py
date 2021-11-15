@@ -25,9 +25,9 @@ class Agent:
 
     def _evaluate_cost(self, contract):
         """
-        Calculates the costs for a series of jobs.
-        :param contract:
-        :return: costs as
+        Calculates the costs for a contract.
+        :param contract (list): List of integers or "jobs", which are unique numbers.
+        :return: costs (int): Absolute value for the costs.
         """
         costs = 0
         for i in range(len(contract)-1):
