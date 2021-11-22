@@ -11,8 +11,7 @@ class Agent:
         costs = self._evaluate_cost(contract)
         costs_last = self._evaluate_cost(last_contract)
 
-        print(f"costs:      {costs}")
-        print(f"costs_last: {costs_last}")
+        print(f"costs: {costs} | costs_last: {costs_last}")
 
         if costs_last >= costs:
             return True
@@ -20,7 +19,7 @@ class Agent:
             prob = math.e ** ((costs_last - costs) / temperature)
             logging.debug(prob)
             random_decision = random.random()
-            print(random_decision)
+            # print(random_decision)
             return random_decision < prob
 
     def _evaluate_cost(self, contract):
