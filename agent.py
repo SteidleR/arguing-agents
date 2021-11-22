@@ -1,32 +1,59 @@
 import math
 import random
-import logging
-
+from contract import Contract
 
 class Agent:
-    def __init__(self, file_name_costs):
+    def __init__(self, agent_name, file_name_costs):
+        self.name = agent_name
         self.cost_matrix = Agent.read_cost_matrix(file_name_costs)
+        self.n = len(self.cost_matrix)
+        self.temperature = 1
 
-    def accept_contract_fink(self, contract, last_contract, temperature=1) -> bool:
-        costs = self._evaluate_cost(contract)
-        costs_last = self._evaluate_cost(last_contract)
+    def calc_temp(self, required_accept_rate, n_trial=1000):
+        """ Calculate the temperature according to the new minimal acceptance rate
+        :param required_accept_rate: Percentage for how many contracts need to be accepted
+        :param n_trial: Number of loops for the contract delta
+        """
+        delta_cost = 0
 
-        print(f"costs: {costs} | costs_last: {costs_last}")
+        last_contract = random.sample(list(range(0, self.n)), self.n)
+        for i in range(0, n_trial):
+            contract = random.sample(list(range(0, self.n)), self.n)
 
-        if costs_last >= costs:
-            return True
+            costs_last = self._evaluate_cost(last_contract)
+            costs = self._evaluate_cost(contract)
+
+            delta_cost += abs(costs - costs_last)
+
+            last_contract = contract
+
+        temp = (delta_cost/n_trial) / math.log(required_accept_rate)
+        self.temperature = temp
+
+    def accept_contract_fink(self, contract: Contract) -> (bool, int):
+        """ Decide whether to accept a contract or not based on Andreas Fink's work
+        :param contract: List of unique integer values representing jobs ranging from 0 to n
+        :return
+            bool: Was the contract accepted?
+            int: Cost of the new contract
+        """
+        cost = self._evaluate_cost(contract.job_list)
+        prev_cost = self._evaluate_cost(contract.prev_contract.job_list)
+
+        if prev_cost >= cost:
+            print(f"{self.name}: {prev_cost} -> {cost} ACCEPT BY DEFAULT")
+            return True, cost
         else:
-            prob = math.e ** ((costs_last - costs) / temperature)
-            logging.debug(prob)
+            prob = math.e ** ((cost - prev_cost) / self.temperature)
             random_decision = random.random()
-            # print(random_decision)
-            return random_decision < prob
+            accept = random_decision < prob
+            print(f"{self.name}: {prev_cost} -> {cost} {'ACCEPT' if accept else 'DECLINE'} WITH PROB {prob}")
+            return accept, cost
 
     def _evaluate_cost(self, contract):
-        """
-        Calculates the costs for a contract.
-        :param contract (list): List of integers or "jobs", which are unique numbers.
-        :return: costs (int): Absolute value for the costs.
+        """ Calculates the costs for a contract
+        :param contract: List of unique integer values representing jobs ranging from 0 to n
+        :return: costs: Absolute value for the costs
         """
         costs = 0
         for i in range(len(contract)-1):
@@ -36,7 +63,6 @@ class Agent:
     @staticmethod
     def read_cost_matrix(file_name_costs):
         """ Read cost matrix from text file
-
         :param file_name_costs: file name/ path to cost matrix
         :return: 2d cost matrix
         """

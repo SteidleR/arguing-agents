@@ -1,28 +1,15 @@
-import logging
-logging.basicConfig(level=logging.DEBUG)
-
 from agent import Agent
 from mediator import Mediator
 
 
-A = Agent("data/daten2A.txt")
-B = Agent("data/daten2B.txt")
+MAX_CONTRACTS = 2000
 
-mediator = Mediator(10)
+START_PROB = 0.8
+END_PROB = 0.1
+PROB_STEP_DOWN = 0.1
 
-try:
-    last_contract = mediator.generate_new_contract()
-    while True:
-        contract = mediator.generate_new_contract()
-        accept_a = A.accept_contract_fink(contract, last_contract)
-        accept_b = B.accept_contract_fink(contract, last_contract)
+A = Agent("🅰️", "data/daten2A.txt")
+B = Agent("🅱️", "data/daten2B.txt")
 
-        last_contract = contract
-
-        if accept_a and accept_b:
-            break
-
-    print("Accepted contract: ", contract)
-
-except KeyboardInterrupt:
-    print("Cancelled...")
+mediator = Mediator([A, B], MAX_CONTRACTS, START_PROB, END_PROB, PROB_STEP_DOWN)
+mediator.run_negotiation_process()
