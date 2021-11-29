@@ -31,12 +31,15 @@ class Mediator:
 
         self.rounds = []
         self.costs_per_round = [[] for _ in range(len(agent_list)+1)]
-        print(self.costs_per_round)
 
     def run_negotiation_process(self):
         """Executes a full negotiation with multiple rounds"""
         for n in range(0, self.max_contracts):
-            self._round_of_negotiation(n)
+            try:
+                self._round_of_negotiation(n)
+            except Exception as e:
+                print(e)
+                break
 
         print("\n🎉 🥳 🎊 Final accepted contract 🪅 🍻 🍾")
 
@@ -59,10 +62,11 @@ class Mediator:
         """
         if round_n % self.step_down == 0:
             self._adjust_temperature()
+            print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
 
-        print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
+        # print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
         contract = self.contracts[-1].refactor_new_contract(self.job_swaps)
-        print("📃", contract)
+        # print("📃", contract)
 
         for i, agent in enumerate(self.agent_list):
             acc, cost = agent.accept_contract_fink(contract)
@@ -74,7 +78,9 @@ class Mediator:
 
     def _adjust_temperature(self):
         """ Adjust temperature for all agents"""
+        if self.current_prob < 1.0e-90:
+            return
         self.current_prob /= 2
-        print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
+        # print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
         for agent in self.agent_list:
             agent.calc_temp(self.current_prob)

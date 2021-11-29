@@ -42,13 +42,13 @@ class Agent:
         prev_cost = self._evaluate_cost(contract.prev_contract.job_list)
 
         if prev_cost >= cost:
-            print(f"{self.name} {prev_cost} -> {cost} ACCEPT BY DEFAULT")
+            # print(f"{self.name} {prev_cost} -> {cost} ACCEPT BY DEFAULT")
             return True, cost
         else:
             prob = math.e ** ((cost - prev_cost) / self.temperature)
             random_decision = random.random()
             accept = random_decision < prob
-            print(f"{self.name} {prev_cost} -> {cost} {'ACCEPT' if accept else 'DECLINE'} WITH PROB {1-prob}")
+            # print(f"{self.name} {prev_cost} -> {cost} {'ACCEPT' if accept else 'DECLINE'} WITH PROB {1-prob}")
             return accept, cost
 
     def _evaluate_cost(self, contract):
