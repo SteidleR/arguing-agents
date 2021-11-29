@@ -62,7 +62,7 @@ class Mediator:
         """ Single round of negotiation process
         :param round_n: current round number
         """
-        if round_n % self.prob_every_step == 0:
+        if round_n % self.prob_step == 0:
             self._adjust_temperature()
 
         print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
@@ -79,7 +79,7 @@ class Mediator:
 
     def _adjust_temperature(self):
         """ Adjust temperature for all agents"""
-        self.current_prob = round(self.current_prob - self.prob_step, 4)
+        self.current_prob /= 2
         if self.current_prob <= 0:
             self.current_prob = self.end_prob
         print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
