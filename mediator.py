@@ -1,6 +1,7 @@
 import random
 from contract import Contract
 
+
 class Mediator:
     def __init__(self,
                  agent_list: list,
@@ -71,4 +72,3 @@ class Mediator:
         print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
         for agent in self.agent_list:
             agent.calc_temp(self.current_prob)
-

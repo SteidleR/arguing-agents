@@ -23,30 +23,36 @@ class Contract:
 
         return diff
 
-    def refactor_job_list(self, n_swaps):
+    def refactor_new_contract(self, n_swaps):
         """ Swaps a desired amount of values in the list
-
         :param n_swaps: Number of swaps
-        :return:
+        :return new_contract: Contract based on the previous agent decision
         """
-        new_job_list = self.job_list.copy()
-
-        pos_1 = random.randrange(0, len(self.job_list) - 1)
-        pos_2 = random.randrange(0, len(self.job_list) - 1)
-
-        if False in self.prev_contract.__agent_accepted_list:
-            print("Refactoring Job List!")
+        if False in self.__agent_accepted_list and self.prev_contract.prev_contract:
+            new_contract = self.prev_contract.copy()
             diff = self.get_diff_from_prev()
+        else:
+            new_contract = self.copy()
+            diff = []
 
+        for i in range(n_swaps):
+            pos_1 = random.randrange(0, len(self.job_list) - 1)
+            pos_2 = random.randrange(0, len(self.job_list) - 1)
+
+            # Executes if there more than two places that can be swapped
             if len(diff) < len(self.job_list) - 2:
                 while pos_1 in diff:
                     pos_1 = random.randrange(0, len(self.job_list) - 1)
                 while pos_2 in diff or pos_2 == pos_1:
                     pos_2 = random.randrange(0, len(self.job_list) - 1)
 
-        new_job_list[pos_2], new_job_list[pos_1] = new_job_list[pos_1], new_job_list[pos_2]
+            new_contract.job_list[pos_2], new_contract.job_list[pos_1] \
+                = new_contract.job_list[pos_1], new_contract.job_list[pos_2]
 
-        return new_job_list
+        return new_contract
+
+    def copy(self):
+        return Contract(self.job_list.copy(), self)
 
     def __len__(self):
         return len(self.job_list)
