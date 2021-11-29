@@ -12,6 +12,12 @@ class Contract:
         self.__agent_accepted_list.append(accepted)
         self.__agent_cost.append(cost)
 
+    def get_agent_decisions(self):
+        return self.__agent_accepted_list
+
+    def get_agent_cost(self):
+        return self.__agent_cost
+
     def get_diff_from_prev(self) -> list:
         """ Get the differences between the previous to current contract
         :return: list of all changed indices

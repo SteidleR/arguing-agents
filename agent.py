@@ -2,6 +2,7 @@ import math
 import random
 from contract import Contract
 
+
 class Agent:
     def __init__(self, agent_name, file_name_costs):
         self.name = agent_name
