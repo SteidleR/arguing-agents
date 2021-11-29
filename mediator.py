@@ -6,9 +6,7 @@ class Mediator:
     def __init__(self,
                  agent_list: list,
                  max_contracts: int = 1000,
-                 start_prob: float = 0.9,
-                 end_prob: float = 0.1,
-                 prob_step: float = 0.1,
+                 step_down: int = 10,
                  job_swaps: int = 1):
         """
         :param agent_list: list of agents
@@ -26,13 +24,10 @@ class Mediator:
         self.contracts[-1].add_agent_decision(True, 0)
         self.max_contracts = max_contracts
 
-        self.start_prob = start_prob
-        self.end_prob = end_prob
-        self.prob_step = prob_step
-        self.prob_every_step = int(self.max_contracts * 1.1 / ((start_prob - end_prob) / prob_step))
+        self.step_down = step_down
         self.job_swaps = job_swaps
 
-        self.current_prob = self.start_prob
+        self.current_prob = 1.0
 
         self.rounds = []
         self.costs_per_round = [[] for _ in range(len(agent_list)+1)]
@@ -62,7 +57,7 @@ class Mediator:
         """ Single round of negotiation process
         :param round_n: current round number
         """
-        if round_n % self.prob_step == 0:
+        if round_n % self.step_down == 0:
             self._adjust_temperature()
 
         print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
@@ -80,8 +75,6 @@ class Mediator:
     def _adjust_temperature(self):
         """ Adjust temperature for all agents"""
         self.current_prob /= 2
-        if self.current_prob <= 0:
-            self.current_prob = self.end_prob
         print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
         for agent in self.agent_list:
             agent.calc_temp(self.current_prob)
