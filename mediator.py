@@ -3,20 +3,16 @@ from contract import Contract
 
 
 class Mediator:
-    def __init__(self,
-                 agent_list: list,
-                 max_contracts: int = 1000,
-                 step_down: int = 10,
-                 job_swaps: int = 1):
-        """
-        :param agent_list: list of agents
-        :param n_jobs: number of jobs
-        :param max_contracts: max number of negotiation rounds
-        :param start_prob: starting probability
-        :param end_prob: final probability
-        :param prob_step: probability step down
+    def __init__(self, agent_list: list, max_contracts: int = 1000, temp_interval: int = 10, job_swaps: int = 1):
+        """ Mediator class
+        Runs the negotiation process and handles contracts
+        :param agent_list: List of all contributing agents
+        :param max_contracts: Max number of negotiation rounds
+        :param temp_interval: Interval of rounds after which temperature changes
+        :param job_swaps: Number of jobs that will be swapped in a contract
         """
         self.agent_list = agent_list
+
         self.base_contract = random.sample(list(range(agent_list[0].n)), agent_list[0].n)
         self.contracts = [Contract(self.base_contract, None)]
         self.contracts[-1].add_agent_decision(True, 0)
@@ -24,7 +20,7 @@ class Mediator:
         self.contracts[-1].add_agent_decision(True, 0)
         self.max_contracts = max_contracts
 
-        self.step_down = step_down
+        self.step_down = temp_interval
         self.job_swaps = job_swaps
 
         self.current_prob = 1.0
@@ -33,7 +29,8 @@ class Mediator:
         self.costs_per_round = [[] for _ in range(len(agent_list)+1)]
 
     def run_negotiation_process(self):
-        """Executes a full negotiation with multiple rounds"""
+        """ Executes a full negotiation with multiple rounds
+        """
         for n in range(0, self.max_contracts):
             try:
                 self._round_of_negotiation(n)
@@ -64,9 +61,9 @@ class Mediator:
             self._adjust_temperature()
             print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
 
-        # print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
+        print(f"\n⚜️ ⚜️ ⚜️ Round: {round_n} ⚜️ ⚜️ ⚜️")
         contract = self.contracts[-1].refactor_new_contract(self.job_swaps)
-        # print("📃", contract)
+        print("📃", contract)
 
         for i, agent in enumerate(self.agent_list):
             acc, cost = agent.accept_contract_fink(contract)
@@ -77,10 +74,11 @@ class Mediator:
         self.contracts.append(contract)
 
     def _adjust_temperature(self):
-        """ Adjust temperature for all agents"""
+        """ Adjust temperature for all agents
+        """
         if self.current_prob < 1.0e-90:
             return
         self.current_prob /= 2
-        # print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
+        print(f"\n🥵 Temperatures are cooling for probability {self.current_prob} 🥶")
         for agent in self.agent_list:
             agent.calc_temp(self.current_prob)

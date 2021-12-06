@@ -6,18 +6,30 @@ import time
 from agent import Agent
 from mediator import Mediator
 
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# ––––––––––––––––– Defining negotiation conditions ––––––––––––––––––
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 MAX_CONTRACTS = 30000
-STEP_DOWN = 500
+TEMPERATURE_INTERVAL = 500
 JOB_SWAPS = 1
 
 A = Agent("🅰️", "data/daten3A.txt")
 B = Agent("🅱️", "data/daten3B.txt")
 
-mediator = Mediator([A, B], MAX_CONTRACTS, STEP_DOWN, JOB_SWAPS)
+mediator = Mediator([A, B], MAX_CONTRACTS, TEMPERATURE_INTERVAL, JOB_SWAPS)
+
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# ––––––––––––––––– Negotiation process ––––––––––––––––––––––––––––––
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
 t1 = time.time()
 mediator.run_negotiation_process()
 print("Dauer:", time.time() - t1)
+
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# ––––––––––––––––– Plotting results –––––––––––––––––––––––––––––––––
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 matplotlib.rcParams["figure.dpi"] = 500
 
